@@ -1,0 +1,17 @@
+# Environment / secrets
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Go binaries / artifacts
+*.exe
+*.test
+*.out
+/bin/
+/build/
