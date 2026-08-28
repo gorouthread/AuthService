@@ -9,9 +9,10 @@ import (
 )
 
 type AuthService interface {
-	Register(ctx context.Context, user domain.User)
-	Login(ctx context.Context, user domain.User)
-	Refresh(ctx context.Context, user domain.User)
+	Register(ctx context.Context, user domain.User) error
+	Login(ctx context.Context, user domain.User) (domain.Session, error)
+	Logout(ctx context.Context, session domain.Session) error
+	Refresh(ctx context.Context, session domain.Session) (domain.Session, error)
 }
 
 type AuthHTTPHandler struct {

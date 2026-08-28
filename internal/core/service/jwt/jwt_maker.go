@@ -8,6 +8,11 @@ import (
 	"github.com/google/uuid"
 )
 
+type JWTManager interface {
+	CreateToken(id uuid.UUID, role string, duration time.Duration) (string, *UserClaims, error)
+	VerifyToken(tokenStr string) (*UserClaims, error)
+}
+
 type JWTMaker struct {
 	secretKey string
 }
@@ -19,11 +24,11 @@ func NewJWTMaker(cfg Config) *JWTMaker {
 }
 
 func (jm *JWTMaker) CreateToken(
-	id uuid.UUID,
+	userID uuid.UUID,
 	role string,
 	duration time.Duration,
 ) (string, *UserClaims, error) {
-	claims, err := NewUserClaims(id, role, duration)
+	claims, err := NewUserClaims(userID, role, duration)
 	if err != nil {
 		return "", nil, err
 	}

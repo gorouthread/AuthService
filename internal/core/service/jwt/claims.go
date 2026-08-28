@@ -9,8 +9,8 @@ import (
 )
 
 type UserClaims struct {
-	ID   uuid.UUID `json:"id"`
-	Role string    `json:"roke"`
+	UserID uuid.UUID `json:"id"`
+	Role   string    `json:"role"`
 	jwt.RegisteredClaims
 }
 
@@ -21,13 +21,13 @@ func NewUserClaims(id uuid.UUID, role string, duration time.Duration) (*UserClai
 	}
 
 	return &UserClaims{
-		ID:   id,
-		Role: role,
+		UserID: id,
+		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ID:        tokenID.String(),
-			Subject:   role,
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(duration)),
 		},
 	}, nil
+
 }
