@@ -61,13 +61,14 @@ migrate-action:
 
 
 
-
 auth-run: 
 	@go run ./cmd/auth-service/main.go
 
 auth-test:
-	go test ./...
+	@go test ./internal/service/auth/... -v -coverprofile=coverage.out
 
+bash-test:
+	@./bash_tests/test.sh
 
 
 
@@ -82,3 +83,4 @@ auth-down:
 
 auth-logs:
 	$(COMPOSE_DEV) logs -f auth-service
+
