@@ -10,6 +10,7 @@ import (
 
 type Pool interface {
 	Set(ctx context.Context, key string, value interface{}, expiration time.Duration) *redis.StatusCmd
+	SetNX(ctx context.Context, key string, value interface{}, expiration time.Duration) *redis.BoolCmd
 	Get(ctx context.Context, key string) *redis.StringCmd
 	Del(ctx context.Context, keys ...string) *redis.IntCmd
 	Exists(ctx context.Context, keys ...string) *redis.IntCmd
@@ -56,8 +57,22 @@ func NewConnectionPool(ctx context.Context, cfg Config) (*ConnectionPool, error)
 	}, nil
 }
 
-func (p *ConnectionPool) Set(ctx context.Context, key string, value interface{}, expiration time.Duration) *redis.StatusCmd {
+func (p *ConnectionPool) Set(
+	ctx context.Context,
+	key string,
+	value interface{},
+	expiration time.Duration,
+) *redis.StatusCmd {
 	return p.client.Set(ctx, key, value, expiration)
+}
+
+func (p *ConnectionPool) SetNX(
+	ctx context.Context,
+	key string,
+	value interface{},
+	expiration time.Duration,
+) *redis.BoolCmd {
+	return p.client.SetNX(ctx, key, value, expiration)
 }
 
 func (p *ConnectionPool) Get(ctx context.Context, key string) *redis.StringCmd {
@@ -72,7 +87,11 @@ func (p *ConnectionPool) Exists(ctx context.Context, keys ...string) *redis.IntC
 	return p.client.Exists(ctx, keys...)
 }
 
-func (p *ConnectionPool) Expire(ctx context.Context, key string, expiration time.Duration) *redis.BoolCmd {
+func (p *ConnectionPool) Expire(
+	ctx context.Context,
+	key string,
+	expiration time.Duration,
+) *redis.BoolCmd {
 	return p.client.Expire(ctx, key, expiration)
 }
 

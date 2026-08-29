@@ -7,7 +7,7 @@ import (
 	"github.com/romreign/AuthService/internal/core/domain"
 )
 
-func (r *AuthRepositoryPostgres) GetSessionByRefreshTokenHash(
+func (r *AuthRepositoryPostgres) GetSessionByRefreshToken(
 	ctx context.Context,
 	session domain.Session,
 ) (domain.Session, error) {

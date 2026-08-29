@@ -4,9 +4,12 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/romreign/AuthService/internal/core/domain"
 	core_transport_http_server "github.com/romreign/AuthService/internal/core/transport/http/server"
 )
+
+const idempotencyKeyHeader = "Idempotency-Key"
 
 type AuthService interface {
 	Register(ctx context.Context, user domain.User) error
@@ -15,13 +18,20 @@ type AuthService interface {
 	Refresh(ctx context.Context, session domain.Session) (domain.Session, error)
 }
 
-type AuthHTTPHandler struct {
-	authService AuthService
+type IdempotencyService interface {
+	GetIdempotencyKey(ctx context.Context, key uuid.UUID, method string, path string) (*domain.IdempotencyData, error)
+	SaveIdempotencyKey(ctx context.Context, key uuid.UUID, data *domain.IdempotencyData) error
 }
 
-func NewAuthHTTPHandler(authService AuthService) *AuthHTTPHandler {
+type AuthHTTPHandler struct {
+	authService        AuthService
+	idempotencyService IdempotencyService
+}
+
+func NewAuthHTTPHandler(authService AuthService, idempotencyService IdempotencyService) *AuthHTTPHandler {
 	return &AuthHTTPHandler{
-		authService: authService,
+		authService:        authService,
+		idempotencyService: idempotencyService,
 	}
 }
 

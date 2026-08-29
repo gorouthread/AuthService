@@ -5,14 +5,22 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+
+	"github.com/romreign/AuthService/internal/core/domain"
 )
 
-func (r *AuthRepositoryRedis) SaveIdempotencyKey(ctx context.Context, idemKey string, resp IdempotencyResponse, ttl time.Duration) error {
-	jsonData, err := json.Marshal(resp)
+func (r *AuthRepositoryRedis) SaveIdempotencyKey(ctx context.Context, key string, data *domain.IdempotencyData, ttl time.Duration) error {
+	req := IdempotencyResponse{
+		Method:     data.Method,
+		URL:        data.URL,
+		StatusCode: data.StatusCode,
+		Body:       data.Body,
+	}
+
+	jsonData, err := json.Marshal(req)
 	if err != nil {
 		return fmt.Errorf("marshal idempotency resp: %w", err)
 	}
 
-	key := fmt.Sprintf(idempotencyPrefix, idemKey)
-	return r.pool.Set(ctx, key, jsonData, ttl).Err()
+	return r.pool.SetNX(ctx, key, jsonData, ttl).Err()
 }

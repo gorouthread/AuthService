@@ -15,7 +15,7 @@ func (r *AuthRepositoryPostgres) CreateUser(
 	defer cancel()
 
 	query := `
-		INSEERT INTO auth_msginx.users(
+		INSERT INTO auth_msginx.users(
 			login,
 			password_hash,
 			role

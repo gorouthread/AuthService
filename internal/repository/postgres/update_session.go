@@ -21,7 +21,7 @@ func (r *AuthRepositoryPostgres) UpdateSession(
 			user_id = $2,
 			is_revoked = $3,
 			created_at = $4,
-			expires_at = $5,
+			expires_at = $5
 		WHERE id = $6
 		RETURNING
 			id,

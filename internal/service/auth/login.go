@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/romreign/AuthService/internal/core/domain"
-	core_transport_http_response "github.com/romreign/AuthService/internal/core/transport/http/response"
+	core_errors "github.com/romreign/AuthService/internal/core/errors"
 	"github.com/romreign/AuthService/pkg/utils"
 )
 
@@ -17,23 +17,24 @@ func (s *AuthService) Login(ctx context.Context, user domain.User) (domain.Sessi
 
 	userFromDb, err := s.authRepositoryPostgres.GetUserByLogin(ctx, user)
 	if err != nil {
-		return domain.Session{}, fmt.Errorf("get user from database: %w: %w", err, core_transport_http_response.ErrNotFound)
+		return domain.Session{}, fmt.Errorf("get user from database: %w: %w", err, core_errors.ErrNotFound)
 	}
 
-	accessToken, accessClaims, err := s.jwtManager.CreateToken(userFromDb.ID, user.Role, 15*time.Minute)
+	if err := utils.CheckPassword(user.PasswordHash, userFromDb.PasswordHash); err != nil {
+		return domain.Session{}, fmt.Errorf("compare password: %w: %w", err, core_errors.ErrNotFound)
+	}
+
+	accessToken, accessClaims, err := s.jwtManager.CreateToken(userFromDb.ID, userFromDb.Role, 15*time.Minute)
 	if err != nil {
 		return domain.Session{}, fmt.Errorf("create access jwt: %w", err)
 	}
 
-	refreshToken, refreshClaims, err := s.jwtManager.CreateToken(userFromDb.ID, user.Role, 24*time.Hour)
+	refreshToken, refreshClaims, err := s.jwtManager.CreateToken(userFromDb.ID, userFromDb.Role, 24*time.Hour)
 	if err != nil {
 		return domain.Session{}, fmt.Errorf("create refresh jwt: %w", err)
 	}
 
-	hashRefreshToken, err := utils.HashString(refreshToken)
-	if err != nil {
-		return domain.Session{}, fmt.Errorf("hashing refresh JWT: %w", err)
-	}
+	hashRefreshToken := utils.HashToken(refreshToken)
 
 	session := domain.NewSessionUninitialized(
 		userFromDb.ID,
@@ -52,5 +53,7 @@ func (s *AuthService) Login(ctx context.Context, user domain.User) (domain.Sessi
 		accessClaims.IssuedAt.Time,
 		accessClaims.ExpiresAt.Time,
 	)
+
+	session.RefreshToken = refreshToken
 	return session, nil
 }

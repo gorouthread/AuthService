@@ -8,21 +8,21 @@ import (
 )
 
 type Config struct {
-	Host     string `env:"HOST" default:"localhost"`
-	Port     string `env:"PORT" default:"6379"`
-	Password string `env:"PASSWORD" default:""`
-	DB       int    `env:"DB" default:"0"`
+	Host     string `envconfig:"HOST"`
+	Port     string `envconfig:"PORT"`
+	Password string `envconfig:"PASSWORD"`
+	DB       int    `envconfig:"DB"`
 
-	PoolSize     int `env:"POOL_SIZE" default:"10"`
-	MinIdleConns int `env:"MIN_IDLE_CONNS" default:"5"`
-	MaxRetries   int `env:"MAX_RETRIES" default:"3"`
+	PoolSize     int `envconfig:"POOL_SIZE"`
+	MinIdleConns int `envconfig:"MIN_IDLE_CONNS"`
+	MaxRetries   int `envconfig:"MAX_RETRIES"`
 
-	DialTimeout  time.Duration `env:"DIAL_TIMEOUT" default:"5s"`
-	ReadTimeout  time.Duration `env:"READ_TIMEOUT" default:"3s"`
-	WriteTimeout time.Duration `env:"WRITE_TIMEOUT" default:"3s"`
-	PoolTimeout  time.Duration `env:"POOL_TIMEOUT" default:"4s"`
+	DialTimeout  time.Duration `envconfig:"DIAL_TIMEOUT"`
+	ReadTimeout  time.Duration `envconfig:"READ_TIMEOUT"`
+	WriteTimeout time.Duration `envconfig:"WRITE_TIMEOUT"`
+	PoolTimeout  time.Duration `envconfig:"POOL_TIMEOUT"`
 
-	Timeout time.Duration `env:"TIMEOUT" default:"5s"`
+	Timeout time.Duration `envconfig:"TIMEOUT"`
 }
 
 func NewConfig() (Config, error) {

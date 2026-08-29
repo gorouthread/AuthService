@@ -13,9 +13,9 @@ const (
 )
 
 type Config struct {
-	Env         string `env:"ENV"`
-	ServiceName string `env:"SERVICE_NAME"`
-	Version     string `env:"VERSION"`
+	Env         string `envconfig:"ENV"`
+	ServiceName string `envconfig:"SERVICE_NAME"`
+	Version     string `envconfig:"VERSION"`
 }
 
 func NewConfig() (Config, error) {

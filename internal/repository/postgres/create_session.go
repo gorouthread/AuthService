@@ -15,7 +15,7 @@ func (r *AuthRepositoryPostgres) CreateSession(
 	defer cancel()
 
 	query := `
-		INSEERT INTO auth_msginx.sessions(
+		INSERT INTO auth_msginx.sessions(
 			refresh_token_hash,
 			user_id,
 			created_at,
@@ -33,8 +33,8 @@ func (r *AuthRepositoryPostgres) CreateSession(
 	row := r.pool.QueryRow(ctx, query,
 		[]byte(session.RefreshToken),
 		session.UserID,
-		session.AccessCreatedAt,
-		session.AccessExpiresAt,
+		session.RefreshCreatedAt,
+		session.RefreshExpiresAt,
 	)
 
 	var sessionModel Session

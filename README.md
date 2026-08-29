@@ -9,13 +9,24 @@
 ## Аудитория
 Web‑приложения, мобильные клиенты, внутренние API‑сервисы
 
-## Запуск микросервиса
+## Запуск микросервиса в dev режиме
+Запуск
 ```bash
-    make service-run
+    make env-up
+    make migrate-up
+    make auth-run
+```
+Быстрые curl тесты (осторожно, данные попадают в бд)
+```bash
+    make bash-test
+```
+Unit тесты service слоя с mock зависимостями
+```bash
+    auth-test
 ```
 
 ## Переменные окружения
-- ENV (local, prod, dev)
+Переменные окружения находятся в файле .env 
 
 ## REST API endpoints
 |      Endpoint         | Method |          Description           |
@@ -25,9 +36,19 @@ Web‑приложения, мобильные клиенты, внутренн�
 | /api/v1/auth/refresh  | POST   | получение нового access токена |
 | /api/v1/auth/logout   | POST   | завершить сеанс пользователя   |  
 
+## Метрики
+TODO
+
+## Swagger 
+TODO
+
 ## Используемые технологии
 - Go (основной язык программирования)
 - PostgreSQL (основная база данных)
 - Redis (кеширование)
 - Docker (контейнеризация приложения)
 - Make (автоматизация сборки)
+- Bash (скриптовые мини тесты curl)
+- Prometheus (метрики)
+- Grafana (dashbourd метрик)
+- Loki (логи)

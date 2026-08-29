@@ -1,4 +1,4 @@
-package core_transport_http_response
+package core_errors
 
 import (
 	"errors"

@@ -62,7 +62,7 @@ func NewLogger(cfg Config) *Logger {
 
 	log = log.With(
 		"service", cfg.ServiceName,
-		"enviroment", cfg.Env,
+		"environment", cfg.Env,
 		"version", cfg.Version,
 	)
 
@@ -74,7 +74,11 @@ func NewLogger(cfg Config) *Logger {
 func FromContext(ctx context.Context) *Logger {
 	log, ok := ctx.Value(loggerKey).(*Logger)
 	if !ok {
-		panic("no logger in context")
+		return NewLogger(Config{
+			Env:         envLocal,
+			ServiceName: "unknown",
+			Version:     "unknown",
+		})
 	}
 
 	return log

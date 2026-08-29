@@ -8,12 +8,12 @@ import (
 )
 
 type Config struct {
-	Host     string        `env:"HOST"`
-	Port     string        `env:"PORT"`
-	User     string        `env:"USER"`
-	Password string        `env:"PASSWORD"`
-	Database string        `env:"DATABASE"`
-	Timeout  time.Duration `env:"TIMEOUT"`
+	Host     string        `envconfig:"HOST"`
+	Port     string        `envconfig:"PORT"`
+	User     string        `envconfig:"USER"`
+	Password string        `envconfig:"PASSWORD"`
+	Database string        `envconfig:"DB"`
+	Timeout  time.Duration `envconfig:"TIMEOUT"`
 }
 
 func NewConfig() (Config, error) {
