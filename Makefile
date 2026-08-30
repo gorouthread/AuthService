@@ -73,14 +73,25 @@ bash-test:
 
 
 auth-build:
-	$(COMPOSE_DEV) build auth-service
+	@$(COMPOSE_DEV) build auth-service
 
-auth-up:
-	$(COMPOSE_DEV) up -d --build auth-service
+auth-up-b:
+	@$(COMPOSE_DEV) up -d --build auth-service
 
 auth-down:
-	$(COMPOSE_DEV) stop auth-service
+	@$(COMPOSE_DEV) stop auth-service
 
 auth-logs:
-	$(COMPOSE_DEV) logs -f auth-service
+	@$(COMPOSE_DEV) logs -f auth-service
 
+auth-up:
+	@$(COMPOSE_DEV) up -d auth-service
+
+
+swagger-gen:
+	@$(COMPOSE_DEV) run --rm swagger \
+		init \
+		-g cmd/auth-service/main.go \
+		-o docs \
+		--parseInternal \
+		--parseDependency 

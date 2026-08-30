@@ -78,9 +78,9 @@ func (h *HTTPResponseHandler) errorResponse(
 ) {
 	logFunc(msg, "error", err)
 
-	response := core_errors.ErrorResponse{
-		Err: err,
-		Msg: msg,
+	response := ErrorResponse{
+		Error:   err.Error(),
+		Message: msg,
 	}
 
 	h.JSONResponse(response, statusCode)

@@ -1,22 +1,25 @@
 # AuthService
-Ммикросервис аутентификации, реализующий единый источник истины для идентификации пользователей и выдачи токенов.
+Микросервис аутентификации, реализующий единый источник для идентификации пользователей и выдачи токенов.
 
 ## Ключевые особенности
-- Stateless‑подход с короткими access‑токенами и серверными refresh‑токенами в Redis 
+- Stateless‑подход с короткими access‑токенами и серверными refresh‑токенами
 - Поддержка ротации refresh‑токенов; 
 - Готовность к горизонтальному масштабированию в Kubernetes.
 
 ## Аудитория
 Web‑приложения, мобильные клиенты, внутренние API‑сервисы
 
-## Запуск микросервиса через docker-compose 
-Запуск
-```bash
+## Переменные окружения
+Пример переменные окружения находятся в файле .env.example. Для запуска нужен файл .env содержащий все переменные из .env.example.
+
+## Быстрый запуск микросервиса через docker-compose 
+Перед выполнением команд .env.example замените на .env
+```bash 
     make env-up
     make migrate-up
-    make auth-up
+    make auth-up-b
 ```
-Быстрые curl тесты (осторожно, данные попадают в бд, собираются метрики)
+Быстрые curl тесты (осторожно, данные попадают в бд, собираются метрики). Можно выполнять сколько угодно раз.
 ```bash
     make bash-test
 ```
@@ -24,9 +27,6 @@ Unit тесты service слоя с mock зависимостями
 ```bash
     make auth-test
 ```
-
-## Переменные окружения
-Переменные окружения находятся в файле .env.example.
 
 ## REST API endpoints
 |      Endpoint         | Method |          Description           |
@@ -37,16 +37,21 @@ Unit тесты service слоя с mock зависимостями
 | /api/v1/auth/logout   | POST   | завершить сеанс пользователя   |  
 
 ## Метрики
-GUI Grafana доступен на localhost:3000
-GUI Prometheus доступен на localhost:9090
-Приложение отображает в Grafana на dashbourd следующие метрики: rps, total request, request by status.
+- GUI Grafana доступен на localhost:3000
+- GUI Prometheus доступен на localhost:9090
+- Приложение отображает в Grafana на dashbourd следующие метрики: rps, total request, request by status.
+
+![metrics example](example_grafana_metrics.png)
 
 ## Логирование
-Логи приложения доступны в Grafana Loki: Grafana -> Explore -> Источник:Локи -> Код {job="docker"}
-Сбор логов осущетсвляется с помощью агента alloy из всех docker контейнеров.
+- Логи приложения доступны в Grafana Loki: Grafana -> Explore -> Источник:Loki -> Код {job="docker"}
+- Сбор логов осущетсвляется с помощью агента alloy из всех docker контейнеров.
+
+![log example](example_grafana_logs.png)
 
 ## Swagger 
-TODO
+Swagger doc доступен на localhost:8080/swagger
+![swag example](example_swagger.png)
 
 ## Используемые технологии
 - Go (основной язык программирования)

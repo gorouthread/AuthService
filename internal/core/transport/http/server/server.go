@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/romreign/AuthService/docs"
 	core_logger "github.com/romreign/AuthService/internal/core/logger"
 	core_transport_http_metrics "github.com/romreign/AuthService/internal/core/transport/http/metrics"
 	core_transport_http_middleware "github.com/romreign/AuthService/internal/core/transport/http/middleware"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 type HTTPServer struct {
@@ -42,13 +44,11 @@ func (h *HTTPServer) RegisterAPIRoutes(routes ...*APIVersionRouter) {
 	}
 }
 
-/*
 func (h *HTTPServer) RegisterSwagger() {
 	h.mux.Handle(
 		"/swagger/",
 		httpSwagger.Handler(
 			httpSwagger.URL("/swagger/doc.json"),
-			httpSwagger.DefaultModelsExpandDepth(-1),
 		),
 	)
 
@@ -61,7 +61,6 @@ func (h *HTTPServer) RegisterSwagger() {
 		},
 	)
 }
-*/
 
 func (h *HTTPServer) Listen(ctx context.Context) error {
 	mux := core_transport_http_middleware.ChainMiddleware(h.mux, h.middleware...)

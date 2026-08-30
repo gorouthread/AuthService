@@ -110,6 +110,18 @@ services:
       - ${XDG_RUNTIME_DIR}/docker.sock:/var/run/docker.sock
     depends_on:
       - loki
+  
+  swagger:
+    build:
+      context: ${PROJECT_ROOT}
+      dockerfile_inline: |
+        FROM golang:1.27.0-alpine3.24
+        RUN apk add --no-cache git
+        RUN go install github.com/swaggo/swag/cmd/swag@v1.16.6
+        WORKDIR /code
+        ENTRYPOINT ["swag"]
+    volumes:
+      - ${PROJECT_ROOT}:/code
 
 volumes:
   postgres_data:

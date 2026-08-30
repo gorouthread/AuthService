@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os/signal"
 	"syscall"
@@ -20,8 +19,15 @@ import (
 	idempotency_service "github.com/romreign/AuthService/internal/service/idempotency"
 	auth_transport_http "github.com/romreign/AuthService/internal/transport/http"
 	core_service_jwt "github.com/romreign/AuthService/pkg/jwt"
+
+	_ "github.com/romreign/AuthService/docs"
 )
 
+// @title        Golang Authorization API
+// @version      1.0
+// @description  Authorization Application REST-API schema
+// @host         127.0.0.1:8080
+// @BasePath     /api/v1
 func main() {
 	ctx, cancel := signal.NotifyContext(
 		context.Background(),
@@ -33,36 +39,34 @@ func main() {
 	cfgLogger := core_logger.NewConfigMust()
 	logger := core_logger.NewLogger(cfgLogger)
 
-	logger.Debug("initializde postgres connection pool")
+	logger.Debug("initializing postgres connection pool")
 	cfgPgpool := core_repository_postgres.NewConfigMust()
-	fmt.Println("cfgPgpool", cfgPgpool)
 	pgpool, err := core_repository_postgres.NewConnectionPool(ctx, cfgPgpool)
 	if err != nil {
 		log.Fatal("failed to init postgres connection pool", err)
 	}
 	defer pgpool.Close()
 
-	logger.Debug("initializde redis connection pool")
+	logger.Debug("initializing redis connection pool")
 	cfgRdpool := core_repository_redis.NewConfigMust()
 	rdpool, err := core_repository_redis.NewConnectionPool(ctx, cfgRdpool)
 	if err != nil {
-		log.Fatal("failed to init postgres connection pool", err)
+		log.Fatal("failed to init redis connection pool", err)
 	}
 	defer rdpool.Close()
 
-	logger.Debug("initializde jwt manager")
+	logger.Debug("initializing jwt manager")
 	cfgJWT := core_service_jwt.NewConfigMust()
 	manager := core_service_jwt.NewJWTMaker(cfgJWT)
 
-	logger.Debug("initialized layers")
+	logger.Debug("initializing layers")
 	pgRepo := auth_repository_postgres.NewAuthRepositoryPostgres(pgpool)
-	pgRepo.Info()
 	rdRepo := auth_repository_redis.NewAuthRepositoryRedis(rdpool)
 	authSrvc := auth_service.NewAuthService(&pgRepo, manager)
 	idempSrvc := idempotency_service.NewIdempotencyService(rdRepo, 24*time.Hour)
 	authHandler := auth_transport_http.NewAuthHTTPHandler(authSrvc, idempSrvc)
 
-	logger.Debug("initialized http server")
+	logger.Debug("initializing http server")
 	cfgSrv := core_transport_http_server.NewConfigMust()
 	httpServer := core_transport_http_server.NewHTTPServer(
 		cfgSrv,
@@ -77,9 +81,9 @@ func main() {
 	apiVersionRouter := core_transport_http_server.NewAPIVersionRouter(core_transport_http_server.APIVersion1)
 	apiVersionRouter.RegisterRoutes(authHandler.Routes()...)
 	httpServer.RegisterAPIRoutes(apiVersionRouter)
-	// TODO httpServer.RegisterSwagger()
+	httpServer.RegisterSwagger()
 
 	if err := httpServer.Listen(ctx); err != nil {
-		logger.Error("http server listen error", err.Error())
+		logger.Error("http server listen", "error:", err.Error())
 	}
 }

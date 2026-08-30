@@ -1,0 +1,255 @@
+basePath: /api/v1
+definitions:
+  github_com_romreign_AuthService_internal_core_transport_http_response.ErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+  internal_transport_http.LoginRequest:
+    properties:
+      login:
+        example: username
+        minLength: 3
+        type: string
+      password:
+        example: superPass
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  internal_transport_http.LoginResponse:
+    properties:
+      access_expired_at:
+        type: string
+      access_token:
+        example: 4db118d8-a4df-438a-8128-24a9886393e5
+        type: string
+      refresh_expired_at:
+        type: string
+      refresh_token:
+        example: 4db118d8-a4df-438a-8128-24a9886393e5
+        type: string
+    required:
+    - access_expired_at
+    - access_token
+    - refresh_expired_at
+    - refresh_token
+    type: object
+  internal_transport_http.LogoutRequest:
+    properties:
+      refresh_token:
+        example: 4db118d8-a4df-438a-8128-24a9886393e5
+        type: string
+    required:
+    - refresh_token
+    type: object
+  internal_transport_http.RefreshRequest:
+    properties:
+      refresh_token:
+        example: 4db118d8-a4df-438a-8128-24a9886393e5
+        type: string
+    required:
+    - refresh_token
+    type: object
+  internal_transport_http.RefreshResponse:
+    properties:
+      access_expired_at:
+        type: string
+      access_token:
+        example: 4db118d8-a4df-438a-8128-24a9886393e5
+        type: string
+      refresh_expired_at:
+        type: string
+      refresh_token:
+        example: 4db118d8-a4df-438a-8128-24a9886393e5
+        type: string
+    required:
+    - access_expired_at
+    - access_token
+    - refresh_expired_at
+    - refresh_token
+    type: object
+  internal_transport_http.RegisterRequest:
+    properties:
+      login:
+        example: username
+        minLength: 3
+        type: string
+      password:
+        example: superPass
+        type: string
+    required:
+    - login
+    - password
+    type: object
+host: 127.0.0.1:8080
+info:
+  contact: {}
+  description: Authorization Application REST-API schema
+  title: Golang Authorization API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user and creates a new session with access and
+        refresh tokens.
+      parameters:
+      - description: Unique idempotency key (UUID)
+        in: header
+        name: Idempotency-Key
+        required: true
+        type: string
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_transport_http.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User successfully authenticated
+          schema:
+            $ref: '#/definitions/internal_transport_http.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_romreign_AuthService_internal_core_transport_http_response.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_romreign_AuthService_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_romreign_AuthService_internal_core_transport_http_response.ErrorResponse'
+      summary: Login user
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Revokes the current user session using the provided refresh token.
+      parameters:
+      - description: Unique idempotency key (UUID)
+        in: header
+        name: Idempotency-Key
+        required: true
+        type: string
+      - description: Logout request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_transport_http.LogoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User successfully logged out
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_romreign_AuthService_internal_core_transport_http_response.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_romreign_AuthService_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_romreign_AuthService_internal_core_transport_http_response.ErrorResponse'
+      summary: Logout user
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refreshes the access token using a valid refresh token.
+      parameters:
+      - description: Unique idempotency key (UUID)
+        in: header
+        name: Idempotency-Key
+        required: true
+        type: string
+      - description: Refresh token request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_transport_http.RefreshRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_transport_http.RefreshResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_romreign_AuthService_internal_core_transport_http_response.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_romreign_AuthService_internal_core_transport_http_response.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/github_com_romreign_AuthService_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_romreign_AuthService_internal_core_transport_http_response.ErrorResponse'
+      summary: Refresh access token
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user account. The request requires an idempotency
+        key to prevent duplicate registration.
+      parameters:
+      - description: Idempotency key (UUID)
+        in: header
+        name: Idempotency-Key
+        required: true
+        type: string
+      - description: Registration request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_transport_http.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Request already processed
+        "201":
+          description: User successfully registered
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_romreign_AuthService_internal_core_transport_http_response.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/github_com_romreign_AuthService_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_romreign_AuthService_internal_core_transport_http_response.ErrorResponse'
+      summary: Register a new user
+      tags:
+      - auth
+swagger: "2.0"

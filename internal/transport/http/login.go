@@ -21,6 +21,19 @@ type LoginResponse struct {
 	SessionResponse
 }
 
+// Login         godoc
+// @Summary      Login user
+// @Description  Authenticates a user and creates a new session with access and refresh tokens.
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        Idempotency-Key  header    string         true  "Unique idempotency key (UUID)"
+// @Param        request          body      LoginRequest   true  "Login credentials"
+// @Success      200              {object}  LoginResponse  "User successfully authenticated"
+// @Failure      400              {object}  core_transport_http_response.ErrorResponse
+// @Failure      401              {object}  core_transport_http_response.ErrorResponse
+// @Failure      500              {object}  core_transport_http_response.ErrorResponse
+// @Router       /auth/login [post]
 func (h *AuthHTTPHandler) Login(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromContext(ctx)

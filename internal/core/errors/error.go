@@ -11,8 +11,3 @@ var (
 	ErrForbidden       = errors.New("forbidden")
 	ErrUnauthorized    = errors.New("unauthorized")
 )
-
-type ErrorResponse struct {
-	Err error
-	Msg string
-}
