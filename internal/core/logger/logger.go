@@ -71,6 +71,16 @@ func NewLogger(cfg Config) *Logger {
 	}
 }
 
+func (l *Logger) With(args ...any) *Logger {
+	return &Logger{
+		Logger: l.Logger.With(args...),
+	}
+}
+
+func WithContext(ctx context.Context, logger *Logger) context.Context {
+	return context.WithValue(ctx, loggerKey, logger)
+}
+
 func FromContext(ctx context.Context) *Logger {
 	log, ok := ctx.Value(loggerKey).(*Logger)
 	if !ok {

@@ -1,15 +1,10 @@
 package core_transport_http_middleware
 
 import (
-	"context"
 	"net/http"
 
 	core_logger "github.com/romreign/AuthService/internal/core/logger"
 )
-
-type contextKey string
-
-const loggerKey contextKey = "logger"
 
 func Logger(logger *core_logger.Logger) Middleware {
 	return func(next http.Handler) http.Handler {
@@ -22,7 +17,7 @@ func Logger(logger *core_logger.Logger) Middleware {
 				"method", r.Method,
 			)
 
-			ctx := context.WithValue(r.Context(), loggerKey, log)
+			ctx := core_logger.WithContext(r.Context(), log)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})

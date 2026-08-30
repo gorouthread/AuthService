@@ -10,13 +10,13 @@ services:
       - APP_VERSION=${APP_VERSION}
       - HTTP_ADDR=${HTTP_ADDR}
       - HTTP_SHUTDOWN_TIMEOUT=${HTTP_SHUTDOWN_TIMEOUT}
-      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_HOST=postgres
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_TIMEOUT=${POSTGRES_TIMEOUT}
-      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_HOST=redis
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_DB=${REDIS_DB}
@@ -70,7 +70,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 5s
-    restart: unless-stopped
 
   prometheus:
     image: prom/prometheus:v3
@@ -91,7 +90,29 @@ services:
       - ${PROJECT_ROOT}/deployments/grafana/datasources:/etc/grafana/provisioning/datasources
       - ${PROJECT_ROOT}/deployments/grafana/dashboards:/etc/grafana/provisioning/dashboards
 
+  loki:
+    image: grafana/loki:3.7.0
+    container_name: msginx-auth-loki
+    command:
+      - -config.file=/etc/loki/loki.yaml
+    volumes:
+      - ${PROJECT_ROOT}/deployments/loki/loki.yaml:/etc/loki/loki.yaml
+      - loki_data:/loki
+
+  alloy:
+    image: grafana/alloy:v1.19.2
+    container_name: msginx-auth-alloy
+    command:
+      - run
+      - /etc/alloy/config.alloy
+    volumes:
+      - ${PROJECT_ROOT}/deployments/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - ${XDG_RUNTIME_DIR}/docker.sock:/var/run/docker.sock
+    depends_on:
+      - loki
+
 volumes:
   postgres_data:
   redis_data:
   grafana_data:
+  loki_data:
