@@ -5,11 +5,30 @@ services:
       context: ${PROJECT_ROOT}
       dockerfile: ${PROJECT_ROOT}/Dockerfile
     environment:
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - APP_ENV=${APP_ENV}
+      - APP_SERVICE_NAME=${APP_SERVICE_NAME}
+      - APP_VERSION=${APP_VERSION}
+      - HTTP_ADDR=${HTTP_ADDR}
+      - HTTP_SHUTDOWN_TIMEOUT=${HTTP_SHUTDOWN_TIMEOUT}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_TIMEOUT=${POSTGRES_TIMEOUT}
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_DB=${REDIS_DB}
+      - REDIS_POOL_SIZE=${REDIS_POOL_SIZE}
+      - REDIS_MIN_IDLE_CONNS=${REDIS_MIN_IDLE_CONNS}
+      - REDIS_MAX_RETRIES=${REDIS_MAX_RETRIES}
+      - REDIS_DIAL_TIMEOUT=${REDIS_DIAL_TIMEOUT}
+      - REDIS_READ_TIMEOUT=${REDIS_READ_TIMEOUT}
+      - REDIS_WRITE_TIMEOUT=${REDIS_WRITE_TIMEOUT}
+      - REDIS_POOL_TIMEOUT=${REDIS_POOL_TIMEOUT}
+      - REDIS_TIMEOUT=${REDIS_TIMEOUT}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
     depends_on:
       postgres:
         condition: service_healthy
@@ -53,6 +72,26 @@ services:
       start_period: 5s
     restart: unless-stopped
 
+  prometheus:
+    image: prom/prometheus:v3
+    container_name: msginx-auth-prometheus
+    volumes:
+      - ${PROJECT_ROOT}/deployments/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
+
+  grafana: 
+    image: grafana/grafana:13.0
+    container_name: msginx-auth-grafana
+    depends_on:
+      - prometheus
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ${PROJECT_ROOT}/deployments/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ${PROJECT_ROOT}/deployments/grafana/dashboards:/etc/grafana/provisioning/dashboards
+
 volumes:
   postgres_data:
   redis_data:
+  grafana_data:

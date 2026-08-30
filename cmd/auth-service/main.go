@@ -11,6 +11,7 @@ import (
 	core_logger "github.com/romreign/AuthService/internal/core/logger"
 	core_repository_postgres "github.com/romreign/AuthService/internal/core/repository/postgres"
 	core_repository_redis "github.com/romreign/AuthService/internal/core/repository/redis"
+	core_transport_http_metrics "github.com/romreign/AuthService/internal/core/transport/http/metrics"
 	core_transport_http_middleware "github.com/romreign/AuthService/internal/core/transport/http/middleware"
 	core_transport_http_server "github.com/romreign/AuthService/internal/core/transport/http/server"
 	auth_repository_postgres "github.com/romreign/AuthService/internal/repository/postgres"
@@ -66,6 +67,7 @@ func main() {
 	httpServer := core_transport_http_server.NewHTTPServer(
 		cfgSrv,
 		logger,
+		core_transport_http_metrics.Metrics(),
 		core_transport_http_middleware.CORS(nil), // пока нет домена
 		core_transport_http_middleware.RequestID(),
 		core_transport_http_middleware.Logger(logger),

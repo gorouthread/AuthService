@@ -2,6 +2,7 @@ services:
   auth-service:
     ports:
       - "8080:8080"
+      - "8081:8081"
 
   postgres:
     ports:
@@ -10,3 +11,15 @@ services:
   redis:
     ports:
       - "6379:6379"
+
+  prometheus:
+    ports:
+      - "9090:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ${PROJECT_ROOT}/deployments/prometheus/prometheus.dev.yaml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    ports:
+      - "3000:3000"

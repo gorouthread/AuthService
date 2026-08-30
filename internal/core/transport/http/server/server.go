@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	core_logger "github.com/romreign/AuthService/internal/core/logger"
+	core_transport_http_metrics "github.com/romreign/AuthService/internal/core/transport/http/metrics"
 	core_transport_http_middleware "github.com/romreign/AuthService/internal/core/transport/http/middleware"
 )
 
@@ -71,6 +72,12 @@ func (h *HTTPServer) Listen(ctx context.Context) error {
 	}
 
 	ch := make(chan error, 1)
+
+	go func() {
+		if err := core_transport_http_metrics.Listen("0.0.0.0:8081"); err != nil {
+			h.log.Warn("failed to start metrics server", "err", err)
+		}
+	}()
 
 	go func() {
 		defer close(ch)
