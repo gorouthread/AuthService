@@ -9,24 +9,24 @@
 ## Аудитория
 Web‑приложения, мобильные клиенты, внутренние API‑сервисы
 
-## Запуск микросервиса в dev режиме
+## Запуск микросервиса через docker-compose 
 Запуск
 ```bash
     make env-up
     make migrate-up
-    make auth-run
+    make auth-up
 ```
-Быстрые curl тесты (осторожно, данные попадают в бд)
+Быстрые curl тесты (осторожно, данные попадают в бд, собираются метрики)
 ```bash
     make bash-test
 ```
 Unit тесты service слоя с mock зависимостями
 ```bash
-    auth-test
+    make auth-test
 ```
 
 ## Переменные окружения
-Переменные окружения находятся в файле .env 
+Переменные окружения находятся в файле .env.example.
 
 ## REST API endpoints
 |      Endpoint         | Method |          Description           |
@@ -37,7 +37,13 @@ Unit тесты service слоя с mock зависимостями
 | /api/v1/auth/logout   | POST   | завершить сеанс пользователя   |  
 
 ## Метрики
-TODO
+GUI Grafana доступен на localhost:3000
+GUI Prometheus доступен на localhost:9090
+Приложение отображает в Grafana на dashbourd следующие метрики: rps, total request, request by status.
+
+## Логирование
+Логи приложения доступны в Grafana Loki: Grafana -> Explore -> Источник:Локи -> Код {job="docker"}
+Сбор логов осущетсвляется с помощью агента alloy из всех docker контейнеров.
 
 ## Swagger 
 TODO

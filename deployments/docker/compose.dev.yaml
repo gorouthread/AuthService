@@ -9,8 +9,8 @@ services:
       - "5432:5432"
 
   redis:
-    ports:
-      - "6379:6379"
+    #ports:
+      #- "6379:6379"
 
   prometheus:
     ports:
@@ -23,3 +23,11 @@ services:
   grafana:
     ports:
       - "3000:3000"
+
+  loki:
+    ports:
+      - "3100:3100"
+
+  alloy:
+    ports:
+      - "12345:12345"
