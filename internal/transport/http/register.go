@@ -16,6 +16,20 @@ type RegisterRequest struct {
 	*AuthRequest
 }
 
+// Register      godoc
+// @Summary      Register a new user
+// @Description  Creates a new user account. The request requires an idempotency key to prevent duplicate registration.
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        Idempotency-Key header string true "Idempotency key (UUID)"
+// @Param        request body RegisterRequest true "Registration request"
+// @Success      201 "User successfully registered"
+// @Success      200 "Request already processed"
+// @Failure      400 {object} core_transport_http_response.ErrorResponse
+// @Failure      409 {object} core_transport_http_response.ErrorResponse
+// @Failure      500 {object} core_transport_http_response.ErrorResponse
+// @Router       /auth/register [post]
 func (h *AuthHTTPHandler) Register(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromContext(ctx)

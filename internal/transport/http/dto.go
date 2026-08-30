@@ -7,8 +7,8 @@ import (
 )
 
 type AuthRequest struct {
-	Login    string `json:"login"    validate:"required" example:"username"`
-	Password string `json:"password" validate:"required" example:"superPass"`
+	Login    string `json:"login"    validate:"required,min=3" example:"username"`
+	Password string `json:"password" validate:"required"       example:"superPass"`
 }
 
 type SessionRequest struct {

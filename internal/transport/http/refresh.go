@@ -21,6 +21,20 @@ type RefreshResponse struct {
 	SessionResponse
 }
 
+// Refresh       godoc
+// @Summary      Refresh access token
+// @Description  Refreshes the access token using a valid refresh token.
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        Idempotency-Key header string true "Unique idempotency key (UUID)"
+// @Param        request body RefreshRequest true "Refresh token request"
+// @Success      201 {object} RefreshResponse
+// @Failure      400 {object} core_transport_http_response.ErrorResponse
+// @Failure      401 {object} core_transport_http_response.ErrorResponse
+// @Failure      409 {object} core_transport_http_response.ErrorResponse
+// @Failure      500 {object} core_transport_http_response.ErrorResponse
+// @Router       /auth/refresh [post]
 func (h *AuthHTTPHandler) Refresh(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromContext(ctx)

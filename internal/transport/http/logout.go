@@ -16,6 +16,19 @@ type LogoutRequest struct {
 	*SessionRequest
 }
 
+// Logout        godoc
+// @Summary      Logout user
+// @Description  Revokes the current user session using the provided refresh token.
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        Idempotency-Key header string true "Unique idempotency key (UUID)"
+// @Param        request body LogoutRequest true "Logout request"
+// @Success      200 "User successfully logged out"
+// @Failure      400 {object} core_transport_http_response.ErrorResponse
+// @Failure      401 {object} core_transport_http_response.ErrorResponse
+// @Failure      500 {object} core_transport_http_response.ErrorResponse
+// @Router       /auth/logout [post]
 func (h *AuthHTTPHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromContext(ctx)
