@@ -56,10 +56,10 @@ Swagger doc доступен на localhost:8080/swagger
 ## Используемые технологии
 - Go (основной язык программирования)
 - PostgreSQL (основная база данных)
-- Redis (кеширование)
+- Redis (кеширование для idempotency)
 - Docker (контейнеризация приложения)
 - Make (автоматизация сборки)
-- Bash (скриптовые мини тесты curl)
+- Bash (скриптовые мини curl тесты)
 - Prometheus (метрики)
 - Grafana (dashbourd метрик)
 - Loki (логи)
