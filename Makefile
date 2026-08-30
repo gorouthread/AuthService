@@ -12,7 +12,7 @@ COMPOSE_DEV = docker compose \
 
 
 env-up:
-	@$(COMPOSE_DEV) up -d postgres redis
+	@$(COMPOSE_DEV) up -d postgres redis prometheus grafana
 
 env-down:
 	@$(COMPOSE_DEV) down
